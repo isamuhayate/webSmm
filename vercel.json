@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "smm-matrix-node.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "smm-matrix-node.js" }
+  ]
+}
