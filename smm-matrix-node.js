@@ -1186,6 +1186,16 @@ app.get('/terms', (req,res)=> res.send(GenericView({ user:req.user, title:'Terms
 app.get('/privacy', (req,res)=> res.send(GenericView({ user:req.user, title:'Privacy Policy', body:`<p class="text-slate-700">Privacy placeholder — replace before production.</p>` })));
 app.get('/refunds', (req,res)=> res.send(GenericView({ user:req.user, title:'Refunds', body:`<p class="text-slate-700">Refund policy placeholder.</p>` })));
 
-// ------------------------ Start server -----------------------
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, ()=> console.log(`\n${APP_TITLE} running → http://127.0.0.1:${PORT} (DB: ${db.name || 'smm_matrix_complete.db'})`));
+// ------------------------ Start server (only local) -----------------------
+if (require.main === module) {
+  // Running locally with: node smm-matrix-node.js
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () =>
+    console.log(`\n${APP_TITLE} running → http://127.0.0.1:${PORT} (DB: ${db.name || 'smm_matrix_complete.db'})`)
+  );
+}
+
+// For Vercel (export the app as a handler)
+module.exports = app;
+
+
