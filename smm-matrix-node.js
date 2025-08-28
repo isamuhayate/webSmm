@@ -163,14 +163,14 @@ function initDb() {
   ensure.run('user@smm.local',  sha256('user123'),  'Demo User', 'user', '@demouser');
 
   // seed plans
-  if (!db.prepare('SELECT COUNT(*) c FROM plans').get().c) {
-    const seed = db.prepare('INSERT INTO plans(name,price_usd,features) VALUES (?,?,?)');
-    [
-      ['Kickoff', 49, JSON.stringify(['600–800+ real followers','Growth pods network','Guaranteed results','Real-time analytics','24/7 Live support','Hashtag optimization'])],
-      ['Growth',  89, JSON.stringify(['800–1,200+ real followers','Hashtag & account targeting','Targeted AI growth','Real-time analytics','Priority support','Content strategy'])],
-      ['Advanced',149, JSON.stringify(['1,200–1,600+ real followers','10x engagement tools','Turn followers into conversions','Real-time analytics','Priority support','Personal account manager','Advanced targeting'])]
-    ].forEach(p => seed.run(...p));
-  }
+if (!db.prepare('SELECT COUNT(*) c FROM plans').get().c) {
+  const seed = db.prepare('INSERT INTO plans(name,price_usd,features) VALUES (?,?,?)');
+  [
+    ['Kickoff Plan', 49, JSON.stringify(['600 - 800+ Real followers','Growth pods network','Guaranteed results','Real-time growth analytics','24/7 Live support'])],
+    ['Growth Plan', 69, JSON.stringify(['800 - 1,200+ Real & Organic followers','Growth pods network','Targeted AI growth','Account and hashtag targeting','Guaranteed results','Real-time growth analytics','24/7 Live support'])],
+    ['Advanced Plan', 129, JSON.stringify(['1,200 - 1,600+ Real & Organic followers','Growth pods network','Targeted AI growth','Account and hashtag targeting','10x your engagement','Turn followers into conversions','Guaranteed results'])]
+  ].forEach(p => seed.run(...p));
+}
 
   // seed posts (add more)
   if (!db.prepare('SELECT COUNT(*) c FROM posts').get().c) {
@@ -256,7 +256,194 @@ function layout({ title = 'Home', user, content, meta = {} }) {
   /* animation helpers */
   .btn-animated { transition: transform .18s ease, box-shadow .18s ease; }
   .btn-animated:active { transform: translateY(2px) scale(.995); box-shadow: none; }
+  /* Pricing Design Styles */
+.billing-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.toggle-group {
+  background: #000;
+  border-radius: 25px;
+  padding: 4px;
+  display: flex;
+}
+
+.toggle-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  background: #fff;
+  color: #000;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.pricing-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  position: relative;
+  border: 2px solid transparent;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.pricing-card.featured {
+  border: 2px solid #00ff88;
+  transform: scale(1.05);
+}
+
+.plan-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.kickoff-badge {
+  background: #007bff;
+  color: white;
+}
+
+.growth-badge {
+  background: #00ff88;
+  color: #000;
+}
+
+.advanced-badge {
+  background: #ffc107;
+  color: #000;
+}
+
+.plan-description {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.price {
+  font-size: 48px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+.price-period {
+  color: #666;
+  font-size: 18px;
+}
+
+.price-note {
+  color: #999;
+  font-size: 12px;
+  margin-bottom: 30px;
+}
+
+.cta-button {
+  width: 100%;
+  padding: 15px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.cta-arrow {
+  background: #00ff88;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #000;
+}
+
+.features-list {
+  list-style: none;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.feature-check {
+  width: 20px;
+  height: 20px;
+  background: #00ff88;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.feature-check::after {
+  content: "✓";
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.feature-info {
+  width: 20px;
+  height: 20px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  cursor: pointer;
+  color: #999;
+  font-size: 12px;
+}
+
+.flame-icon {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  font-size: 30px;
+}
 </style>
+
 </head>
 <body class="text-slate-900 antialiased bg-white">
   <nav class="sticky top-0 z-50 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white backdrop-blur-md bg-opacity-95">
@@ -523,42 +710,52 @@ function HomeView({ user, plans, reviews, posts }) {
   </div>
 </section>
 
-<!-- Pricing preview (colorful & animated, includes tooltip wrappers) -->
-<section class="py-16 bg-white" data-tooltip-boundary>
+<!-- Pricing preview -->
+<section class="py-16 bg-gray-50">
   <div class="max-w-7xl mx-auto px-4">
-    <div class="text-center mb-8"><h2 class="text-3xl font-bold">Pick a Plan</h2><p class="text-gray-600">Transparent pricing with clear features</p></div>
-    <div class="grid md:grid-cols-3 gap-6">
+    <div class="billing-toggle">
+      <div class="toggle-group">
+        <button class="toggle-btn active">Monthly</button>
+        <button class="toggle-btn">Quarterly</button>
+        <button class="toggle-btn">Yearly</button>
+      </div>
+    </div>
+    
+    <div class="pricing-grid">
       ${plans.map((p,i)=> {
         const features = JSON.parse(p.features);
-        const accent = i===1 ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white' : i===0 ? 'bg-gradient-to-br from-indigo-600 to-indigo-400 text-white' : 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white';
+        const badges = ['kickoff-badge', 'growth-badge', 'advanced-badge'];
+        const badgeTexts = ['KICKOFF PLAN', 'GROWTH PLAN', 'ADVANCED PLAN'];
+        const descriptions = [
+          'Put your Instagram growth on autopilot. Perfect for personal accounts.',
+          'Organic Instagram growth designed to connect you with your ideal audience.',
+          'Advanced tools to drive conversion rates. Ideal for influencers and businesses.'
+        ];
+        const dailyRates = ['1.63', '2.30', '4.30'];
+        
         return `
-        <div class="pricing-card p-6 ${i===1?'transform scale-100':''}">
-          <div class="rounded-lg overflow-hidden border">
-            <div class="p-6 ${accent}">
-              <div class="flex items-center justify-between">
-                <div><h3 class="text-xl font-bold">${escapeHtml(p.name)}</h3><div class="text-sm opacity-90">${i===1?'<span class="inline-block mt-2 px-3 py-1 bg-white/20 rounded-full text-xs">Most Popular</span>':''}</div></div>
-                <div class="text-right">
-                  <div class="text-3xl font-extrabold">${currency(p.price_usd)}</div>
-                  <div class="text-xs opacity-90">/month</div>
-                </div>
-              </div>
-            </div>
-            <div class="p-6 bg-white">
-              <ul class="space-y-2 text-slate-700">
-                ${features.map(f=>`<li>• ${escapeHtml(f)}</li>`).join('')}
-              </ul>
-              <div class="mt-4 flex gap-3">
-                <a href="/checkout?plan_id=${p.id}" class="px-4 py-2 rounded-lg bg-indigo-600 text-white font-semibold btn-animated">Get Started</a>
-                <div class="pricing-tooltip-wrapper relative inline-block ml-auto">
-                  <button class="px-4 py-2 rounded-lg border border-slate-200 text-sm">Details</button>
-                  <div class="pricing-tooltip" role="tooltip">
-                    <div class="text-sm">Discounts available for quarterly/annual billing. Custom enterprise pricing on request.</div>
-                    <div class="pricing-tooltip-arrow"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="pricing-card ${i===1?'featured':''}">
+          ${i===1?'<div class="flame-icon">🔥</div>':''}
+          <div class="plan-badge ${badges[i]}">${badgeTexts[i]}</div>
+          <p class="plan-description">${descriptions[i]}</p>
+          
+          <div class="price">$${p.price_usd}<span class="price-period">/mo</span></div>
+          <div class="price-note">(only $${dailyRates[i]}/day)</div>
+          
+          <button class="cta-button" onclick="window.location.href='/checkout?plan_id=${p.id}'">
+            <span>Get Started Today</span>
+            <div class="cta-arrow">→</div>
+          </button>
+          
+          <ul class="features-list">
+            ${features.map(f=>`
+              <li class="feature-item">
+                <div class="feature-check"></div>
+                <span>${escapeHtml(f).replace(/(Real|Real & Organic)/g, '<strong>$1</strong>')}</span>
+                <div class="feature-info">?</div>
+              </li>
+            `).join('')}
+          </ul>
         </div>`;
       }).join('')}
     </div>
@@ -896,43 +1093,67 @@ app.post('/subscribe', (req,res)=>{
 app.get('/pricing', (req,res)=>{
   const plans = db.prepare('SELECT * FROM plans').all();
   res.send(layout({ title:'Pricing', user:req.user, content: `
-<section class="max-w-7xl mx-auto px-4 py-12">
-  <h2 class="text-3xl font-bold mb-6">Pricing</h2>
-  <div class="grid md:grid-cols-3 gap-6">
-    ${plans.map((p,i)=>`
-      <div class="p-6 rounded-2xl pricing-card bg-white border">
-        <div class="${i===1 ? 'bg-emerald-500 text-white' : i===0 ? 'bg-indigo-600 text-white' : 'bg-orange-400 text-white'} p-6 rounded-t-xl">
-          <h3 class="text-xl font-bold">${escapeHtml(p.name)}</h3>
-          <div class="text-3xl font-extrabold mt-2">${currency(p.price_usd)} <span class="text-sm">/mo</span></div>
-        </div>
-        <div class="p-6">
-          <ul class="space-y-2 text-slate-700">${JSON.parse(p.features).map(f=>`<li>• ${escapeHtml(f)}</li>`).join('')}</ul>
-          <div class="mt-4 flex items-center gap-3">
-            <a href="/checkout?plan_id=${p.id}" class="px-4 py-2 rounded bg-indigo-600 text-white">Choose</a>
-            <div class="pricing-tooltip-wrapper relative">
-              <button class="px-3 py-1 border rounded text-sm">More</button>
-              <div class="pricing-tooltip">Annual billing saves up to 20% — contact sales for enterprise pricing.<div class="pricing-tooltip-arrow"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>`).join('')}
+<section class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="billing-toggle">
+      <div class="toggle-group">
+        <button class="toggle-btn active">Monthly</button>
+        <button class="toggle-btn">Quarterly</button>
+        <button class="toggle-btn">Yearly</button>
+      </div>
+    </div>
+    
+    <div class="pricing-grid">
+      ${plans.map((p,i)=> {
+        const features = JSON.parse(p.features);
+        const badges = ['kickoff-badge', 'growth-badge', 'advanced-badge'];
+        const badgeTexts = ['KICKOFF PLAN', 'GROWTH PLAN', 'ADVANCED PLAN'];
+        const descriptions = [
+          'Put your Instagram growth on autopilot. Perfect for personal accounts.',
+          'Organic Instagram growth designed to connect you with your ideal audience.',
+          'Advanced tools to drive conversion rates. Ideal for influencers and businesses.'
+        ];
+        const dailyRates = ['1.63', '2.30', '4.30'];
+        
+        return `
+        <div class="pricing-card ${i===1?'featured':''}">
+          ${i===1?'<div class="flame-icon">🔥</div>':''}
+          <div class="plan-badge ${badges[i]}">${badgeTexts[i]}</div>
+          <p class="plan-description">${descriptions[i]}</p>
+          
+          <div class="price">$${p.price_usd}<span class="price-period">/mo</span></div>
+          <div class="price-note">(only $${dailyRates[i]}/day)</div>
+          
+          <button class="cta-button" onclick="window.location.href='/checkout?plan_id=${p.id}'">
+            <span>Get Started Today</span>
+            <div class="cta-arrow">→</div>
+          </button>
+          
+          <ul class="features-list">
+            ${features.map(f=>`
+              <li class="feature-item">
+                <div class="feature-check"></div>
+                <span>${escapeHtml(f).replace(/(Real|Real & Organic)/g, '<strong>$1</strong>')}</span>
+                <div class="feature-info">?</div>
+              </li>
+            `).join('')}
+          </ul>
+        </div>`;
+      }).join('')}
+    </div>
   </div>
 </section>
+
+<script>
+  // Toggle functionality
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelector('.toggle-btn.active').classList.remove('active');
+      this.classList.add('active');
+    });
+  });
+</script>
 ` }));
-});
-app.get('/checkout', (req,res)=>{
-  const plan = db.prepare('SELECT * FROM plans WHERE id=?').get(Number(req.query.plan_id));
-  if (!plan) return res.status(404).send('Plan not found');
-  if (!req.user) return res.redirect('/login');
-  res.send(layout({ title:'Checkout', user:req.user, content:`<section class="max-w-3xl mx-auto px-4 py-10"><h2 class="text-2xl">Checkout — ${escapeHtml(plan.name)}</h2><p class="mt-2">Price: <b>${currency(plan.price_usd)}/mo</b></p><p class="text-slate-600 mt-3">Demo mode: payments not integrated — this is a placeholder for Stripe/PayPal integration.</p></section>` }));
-});
-app.post('/checkout', (req,res)=>{
-  if (!req.user) return res.redirect('/login');
-  const plan = db.prepare('SELECT * FROM plans WHERE id=?').get(Number(req.query.plan_id));
-  if (!plan) return res.status(404).send('Plan not found');
-  // pretend payment succeeded and mark as 'paid' — in real app hook payment gateway
-  db.prepare('INSERT INTO orders(user_id,plan_id,ig_username,notes,status) VALUES (?,?,?,?,?)').run(req.user.id, plan.id, req.body.ig_username||'', req.body.notes||'', 'paid');
-  res.redirect(req.user.role==='admin'?'/dashboard':'/');
 });
 
 // -------------------------- Admin routes --------------------------
@@ -1186,6 +1407,7 @@ app.get('/terms', (req,res)=> res.send(GenericView({ user:req.user, title:'Terms
 app.get('/privacy', (req,res)=> res.send(GenericView({ user:req.user, title:'Privacy Policy', body:`<p class="text-slate-700">Privacy placeholder — replace before production.</p>` })));
 app.get('/refunds', (req,res)=> res.send(GenericView({ user:req.user, title:'Refunds', body:`<p class="text-slate-700">Refund policy placeholder.</p>` })));
 
+
 // ------------------------ Start server (only local) -----------------------
 if (require.main === module) {
   // Running locally with: node smm-matrix-node.js
@@ -1197,5 +1419,6 @@ if (require.main === module) {
 
 // For Vercel (export the app as a handler)
 module.exports = app;
+
 
 
