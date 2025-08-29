@@ -230,9 +230,7 @@ function layout({ title = 'Home', user, content, meta = {} }) {
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='48' font-size='48'>📈</text></svg>">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
 <style>
   /* Reusable visuals */
@@ -742,7 +740,7 @@ function HomeView({ user, plans, reviews, posts }) {
           <div class="price">$${p.price_usd}<span class="price-period">/mo</span></div>
           <div class="price-note">(only $${dailyRates[i]}/day)</div>
           
-          <button class="cta-button" onclick="window.location.href='/checkout?plan_id=${p.id}'">
+          <button class="cta-button" onclick="handleCheckout(${p.id})">
             <span>Get Started Today</span>
             <div class="cta-arrow">→</div>
           </button>
@@ -761,24 +759,233 @@ function HomeView({ user, plans, reviews, posts }) {
     </div>
   </div>
 </section>
+</div>
+  </div>
+</section>
+
+<!-- Add this script right after the pricing section -->
+<script>
+  // Toggle functionality for homepage pricing
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const active = document.querySelector('.toggle-btn.active');
+        if (active) active.classList.remove('active');
+        this.classList.add('active');
+        
+        // Update prices based on selection
+        const period = this.textContent;
+        const prices = document.querySelectorAll('.price');
+        const notes = document.querySelectorAll('.price-note');
+        
+        if (period === 'Quarterly') {
+          // 10% discount for quarterly
+          prices[0].innerHTML = '$44<span class="price-period">/mo</span>';
+          prices[1].innerHTML = '$62<span class="price-period">/mo</span>';
+          prices[2].innerHTML = '$116<span class="price-period">/mo</span>';
+          notes[0].textContent = '(only $1.47/day, billed quarterly)';
+          notes[1].textContent = '(only $2.07/day, billed quarterly)';
+          notes[2].textContent = '(only $3.87/day, billed quarterly)';
+        } else if (period === 'Yearly') {
+          // 20% discount for yearly
+          prices[0].innerHTML = '$39<span class="price-period">/mo</span>';
+          prices[1].innerHTML = '$55<span class="price-period">/mo</span>';
+          prices[2].innerHTML = '$103<span class="price-period">/mo</span>';
+          notes[0].textContent = '(only $1.30/day, billed annually)';
+          notes[1].textContent = '(only $1.83/day, billed annually)';
+          notes[2].textContent = '(only $3.43/day, billed annually)';
+        } else {
+          // Monthly (original prices)
+          prices[0].innerHTML = '$49<span class="price-period">/mo</span>';
+          prices[1].innerHTML = '$69<span class="price-period">/mo</span>';
+          prices[2].innerHTML = '$129<span class="price-period">/mo</span>';
+          notes[0].textContent = '(only $1.63/day)';
+          notes[1].textContent = '(only $2.30/day)';
+          notes[2].textContent = '(only $4.30/day)';
+        }
+      });
+    });
+  });
+</script>
+</div>
+  </div>
+  
+  <script>
+    // Toggle functionality for homepage pricing
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const active = document.querySelector('.toggle-btn.active');
+          if (active) active.classList.remove('active');
+          this.classList.add('active');
+          
+          // Update prices based on selection
+          const period = this.textContent;
+          const prices = document.querySelectorAll('.price');
+          const notes = document.querySelectorAll('.price-note');
+          
+          if (period === 'Quarterly') {
+            prices[0].innerHTML = '$44<span class="price-period">/mo</span>';
+            prices[1].innerHTML = '$62<span class="price-period">/mo</span>';
+            prices[2].innerHTML = '$116<span class="price-period">/mo</span>';
+            notes[0].textContent = '(only $1.47/day, billed quarterly)';
+            notes[1].textContent = '(only $2.07/day, billed quarterly)';
+            notes[2].textContent = '(only $3.87/day, billed quarterly)';
+          } else if (period === 'Yearly') {
+            prices[0].innerHTML = '$39<span class="price-period">/mo</span>';
+            prices[1].innerHTML = '$55<span class="price-period">/mo</span>';
+            prices[2].innerHTML = '$103<span class="price-period">/mo</span>';
+            notes[0].textContent = '(only $1.30/day, billed annually)';
+            notes[1].textContent = '(only $1.83/day, billed annually)';
+            notes[2].textContent = '(only $3.43/day, billed annually)';
+          } else {
+            prices[0].innerHTML = '$49<span class="price-period">/mo</span>';
+            prices[1].innerHTML = '$69<span class="price-period">/mo</span>';
+            prices[2].innerHTML = '$129<span class="price-period">/mo</span>';
+            notes[0].textContent = '(only $1.63/day)';
+            notes[1].textContent = '(only $2.30/day)';
+            notes[2].textContent = '(only $4.30/day)';
+          }
+        });
+      });
+      
+      // Checkout handler function
+      window.handleCheckout = function(planId) {
+        fetch('/checkout?plan_id=' + planId)
+          .then(response => {
+            if (response.ok) {
+              window.location.href = '/checkout?plan_id=' + planId;
+            } else {
+              alert('Checkout coming soon! Plan ID: ' + planId + ' selected. Contact support to complete order.');
+            }
+          })
+          .catch(error => {
+            alert('Checkout system is being set up. Contact support for Plan #' + planId);
+          });
+      };
+    });
+    
+  </script>
+
 
 <!-- Testimonials -->
-<section class="py-16 bg-gradient-to-br from-indigo-50 to-purple-50">
+<!-- What do our customers say -->
+<section class="py-16 bg-gray-50">
   <div class="max-w-7xl mx-auto px-4">
-    <div class="text-center mb-8"><h2 class="text-3xl font-bold">Client Stories</h2><p class="text-gray-600">Real results from real people</p></div>
-    <div class="grid md:grid-cols-3 gap-6">
-      ${reviews.slice(0,3).map(r=>`
-        <div class="bg-white p-6 rounded-2xl shadow">
-          <div class="flex items-center gap-4 mb-3">
-            <img src="${r.avatar||'https://i.pravatar.cc/150?img=1'}" class="w-12 h-12 rounded-full object-cover" />
+    <div class="grid lg:grid-cols-2 gap-12">
+      <!-- Left side - Reviews info -->
+      <div>
+        <h2 class="text-3xl font-bold mb-6">What do our customers say?</h2>
+        <p class="text-gray-600 mb-8">Social Boost helps 3,000+ active customers to build their audience servicing customers in over 140 countries in a variety of industries from individuals to Fortune 500 companies, and everything in-between!</p>
+        
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+              <span class="text-white text-sm">✓</span>
+            </div>
+            <span class="text-gray-700">Real, Organic and Engaged Instagram Followers</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+              <span class="text-white text-sm">✓</span>
+            </div>
+            <span class="text-gray-700">24/7 Live Chat and Phone Support in UK & US</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+              <span class="text-white text-sm">✓</span>
+            </div>
+            <span class="text-gray-700">100% No risk, all plans include our Instagram Growth Guarantee!</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right side - Customer reviews -->
+      <div class="space-y-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://i.pravatar.cc/50?img=20" class="w-12 h-12 rounded-full" alt="Gregg Lomas">
             <div>
-              <div class="font-bold">${escapeHtml(r.name)}</div>
-              <div class="text-yellow-500">${'★'.repeat(r.stars)}</div>
+              <div class="font-semibold">Gregg Lomas</div>
+              <div class="text-yellow-500">★★★★★</div>
             </div>
           </div>
-          <div class="text-slate-700 italic">"${escapeHtml(r.content)}"</div>
+          <p class="text-gray-600 italic">"Service is really easy to use. They understand your target market and I saw growth and engagement immediately."</p>
         </div>
-      `).join('')}
+        
+        <div class="bg-white p-6 rounded-xl shadow-sm border">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://i.pravatar.cc/50?img=21" class="w-12 h-12 rounded-full" alt="Veronika Bergaric">
+            <div>
+              <div class="font-semibold">Veronika Bergaric</div>
+              <div class="text-yellow-500">★★★★★</div>
+            </div>
+          </div>
+          <p class="text-gray-600 italic">"I'm really impressed! Especially with the fact that it wasn't all fake users adding me up! Hope to work with you more!"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust section with brand logos -->
+<section class="py-12 bg-white border-t border-b">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h3 class="text-xl font-semibold mb-2">#1 Instagram Marketing Agency</h3>
+    <p class="text-gray-600 mb-8">Grow your Instagram with <strong>real followers</strong> that will like, comment and engage with your content</p>
+    
+<div class="flex justify-center gap-4 mb-6">
+  <a href="/contact" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors inline-block">
+    Chat with us →
+  </a>
+  <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors inline-block">
+    Growth Estimation →
+  </a>
+</div>
+    
+    <p class="text-sm text-gray-500 mb-8">We've managed over 23,000 Instagram Accounts</p>
+    
+    <!-- Brand logos -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 items-center opacity-60">
+      <div class="flex justify-center">
+        <span class="text-2xl font-bold text-gray-400">Mashable</span>
+      </div>
+      <div class="flex justify-center">
+        <span class="text-2xl font-bold text-gray-400">Forbes</span>
+      </div>
+      <div class="flex justify-center">
+        <span class="text-2xl font-bold text-gray-400">HUFFPOST</span>
+      </div>
+      <div class="flex justify-center">
+        <span class="text-2xl font-bold text-gray-400">Entrepreneur</span>
+      </div>
+      <div class="flex justify-center">
+        <span class="text-2xl font-bold text-gray-400">BuzzFeed</span>
+      </div>
+      <div class="flex justify-center md:col-start-2">
+        <span class="text-xl font-bold text-gray-400">Medium</span>
+      </div>
+      <div class="flex justify-center">
+        <span class="text-xl font-bold text-gray-400">Product Hunt</span>
+      </div>
+      <div class="flex justify-center">
+        <span class="text-xl font-bold text-gray-400">TechCrunch</span>
+      </div>
+      <div class="flex justify-center">
+        <span class="text-xl font-bold text-gray-400">VICE</span>
+      </div>
+    </div>
+    
+    <!-- Customer testimonial -->
+    <div class="mt-12 max-w-2xl mx-auto">
+      <p class="text-gray-600 italic mb-4">"Social Boost has been a huge help in growing our Instagram account organically. The targeting has been excellent and the followers are real and engaged. So, if you want to get Instagram followers, you need to try them."</p>
+      <div class="flex items-center justify-center gap-3">
+        <img src="https://i.pravatar.cc/50?img=22" class="w-12 h-12 rounded-full" alt="Levon Sirbol">
+        <div>
+          <div class="font-semibold">Levon Sirbol</div>
+          <div class="text-sm text-gray-500">Head Of Marketing, Torenti Clothing</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -812,6 +1019,41 @@ function HomeView({ user, plans, reviews, posts }) {
     </div>
   </div>
 </section>
+
+<script>
+// Counter animation
+document.addEventListener('DOMContentLoaded', function() {
+  const counters = document.querySelectorAll('.counter');
+  const animateCounter = (counter) => {
+    const target = parseInt(counter.getAttribute('data-target'));
+    const increment = target / 100;
+    let current = 0;
+    
+    const updateCounter = () => {
+      if (current < target) {
+        current += increment;
+        counter.textContent = Math.floor(current).toLocaleString();
+        requestAnimationFrame(updateCounter);
+      } else {
+        counter.textContent = target.toLocaleString();
+      }
+    };
+    updateCounter();
+  };
+  
+  // Start animation when counters are visible
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  });
+  
+  counters.forEach(counter => observer.observe(counter));
+});
+</script>
 ` });
 }
 
@@ -1124,7 +1366,7 @@ app.get('/pricing', (req,res)=>{
           <div class="price">$${p.price_usd}<span class="price-period">/mo</span></div>
           <div class="price-note">(only $${dailyRates[i]}/day)</div>
           
-          <button class="cta-button" onclick="window.location.href='/checkout?plan_id=${p.id}'">
+          <button class="cta-button" onclick="handleCheckout(${p.id})">
             <span>Get Started Today</span>
             <div class="cta-arrow">→</div>
           </button>
@@ -1143,16 +1385,60 @@ app.get('/pricing', (req,res)=>{
     </div>
   </div>
 </section>
-
 <script>
-  // Toggle functionality
+  // Toggle functionality with price updates
   document.querySelectorAll('.toggle-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-      document.querySelector('.toggle-btn.active').classList.remove('active');
+      const active = document.querySelector('.toggle-btn.active');
+      if (active) active.classList.remove('active');
       this.classList.add('active');
+      
+      // Update prices based on selection
+      const period = this.textContent;
+      const prices = document.querySelectorAll('.price');
+      const notes = document.querySelectorAll('.price-note');
+      
+      if (period === 'Quarterly') {
+        prices[0].innerHTML = '$44<span class="price-period">/mo</span>';
+        prices[1].innerHTML = '$62<span class="price-period">/mo</span>';
+        prices[2].innerHTML = '$116<span class="price-period">/mo</span>';
+        notes[0].textContent = '(only $1.47/day, billed quarterly)';
+        notes[1].textContent = '(only $2.07/day, billed quarterly)';
+        notes[2].textContent = '(only $3.87/day, billed quarterly)';
+      } else if (period === 'Yearly') {
+        prices[0].innerHTML = '$39<span class="price-period">/mo</span>';
+        prices[1].innerHTML = '$55<span class="price-period">/mo</span>';
+        prices[2].innerHTML = '$103<span class="price-period">/mo</span>';
+        notes[0].textContent = '(only $1.30/day, billed annually)';
+        notes[1].textContent = '(only $1.83/day, billed annually)';
+        notes[2].textContent = '(only $3.43/day, billed annually)';
+      } else {
+        prices[0].innerHTML = '$49<span class="price-period">/mo</span>';
+        prices[1].innerHTML = '$69<span class="price-period">/mo</span>';
+        prices[2].innerHTML = '$129<span class="price-period">/mo</span>';
+        notes[0].textContent = '(only $1.63/day)';
+        notes[1].textContent = '(only $2.30/day)';
+        notes[2].textContent = '(only $4.30/day)';
+      }
     });
   });
+  
+  // Checkout handler function
+  function handleCheckout(planId) {
+    fetch('/checkout?plan_id=' + planId)
+      .then(response => {
+        if (response.ok) {
+          window.location.href = '/checkout?plan_id=' + planId;
+        } else {
+          alert('Checkout coming soon! Plan ID: ' + planId + ' selected. Contact support to complete order.');
+        }
+      })
+      .catch(error => {
+        alert('Checkout system is being set up. Contact support for Plan #' + planId);
+      });
+  }
 </script>
+
 ` }));
 });
 
@@ -1361,51 +1647,502 @@ app.get('/performance/:userId', (req,res)=>{
 });
 
 // Static pages
-app.get('/about', (req,res)=> res.send(GenericView({ user:req.user, title:'About', body: `
-  <h3>SMM Matrix — Redefining Social Media Excellence</h3>
-  <p class="text-slate-700">At SMM Matrix, we're not just a social media marketing agency — we're your partners in digital success.</p>
-  <p class="text-slate-700 mt-3">Founded by marketing experts with real-world results. We focus on data-driven strategies and authentic engagement.</p>
-` })));
-app.get('/faq', (req,res)=> {
-  const faqHtml = `
-    <div class="grid md:grid-cols-2 gap-4">
-      <div class="border rounded-xl p-4 bg-white">
-        <div class="font-bold">Are followers real?</div>
-        <div class="text-slate-700 mt-2">Yes. We target real users using niche targeting, competitor analysis and hashtag matching. We do not use bot farms.</div>
+app.get('/about', (req,res)=> {
+  const aboutContent = `
+    <!-- Hero Section -->
+    <section class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold">About Us</h1>
+        <div class="flex items-center justify-center gap-2 mt-4">
+          <a href="/" class="text-purple-200 hover:text-white">Home</a>
+          <span class="text-purple-200">›</span>
+          <span>About Us</span>
+        </div>
       </div>
-      <div class="border rounded-xl p-4 bg-white">
-        <div class="font-bold">How do you measure success?</div>
-        <div class="text-slate-700 mt-2">We track profile visits, follows, engagement rate, and conversions. Regular reports are sent to clients.</div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-16 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <!-- Left Content -->
+          <div>
+            <div class="text-sm text-indigo-600 font-semibold mb-4">ABOUT US</div>
+            <h2 class="text-3xl font-bold mb-6">SMM Matrix — Redefining Social Media Excellence</h2>
+            <p class="text-gray-600 mb-6">At SMM Matrix, we're not just a social media marketing agency — we're your partners in digital success. Established with a mission for providing businesses to new heights through strategic social presence, we bring a unique blend of creativity, data-driven strategies, and authentic engagement.</p>
+            
+            <div class="space-y-6">
+              <!-- Strategic Brilliance -->
+              <div class="flex gap-4">
+                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span class="text-indigo-600 text-xl">🎯</span>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg">Strategic Brilliance</h3>
+                  <p class="text-gray-600">We don't just create content; we craft strategies. Our team of experts analyzes your brand's unique identity, studies your target audience's preferences, and develops content campaigns that foster meaningful connections with your target audience.</p>
+                </div>
+              </div>
+              
+              <!-- Time Efficiency -->
+              <div class="flex gap-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span class="text-purple-600 text-xl">⏰</span>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg">Time Efficiency</h3>
+                  <p class="text-gray-600">In the fast-paced world of social media, timing is everything. Our streamlined processes and efficient teamwork guarantee optimized social post scheduling and strategic management.</p>
+                </div>
+              </div>
+            </div>
+            
+            <button class="mt-8 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+              Contact Us
+            </button>
+          </div>
+          
+          <!-- Right Images -->
+          <div class="space-y-4">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=600&auto=format&fit=crop" 
+                 class="w-full rounded-xl shadow-lg" alt="Team meeting">
+            <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=600&auto=format&fit=crop" 
+                 class="w-full rounded-xl shadow-lg" alt="Social media strategy">
+          </div>
+        </div>
       </div>
-      <div class="border rounded-xl p-4 bg-white">
-        <div class="font-bold">Do you provide guarantees?</div>
-        <div class="text-slate-700 mt-2">We provide steady growth guarantees per plan terms. Details are included on plan pages.</div>
+    </section>
+
+    <!-- Features Cards -->
+    <section class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Card 1 -->
+          <div class="bg-slate-900 text-white p-8 rounded-xl">
+            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-4">
+              <span class="text-slate-900 text-xl">⚡</span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Save Your Time</h3>
+            <p class="text-gray-300">Stop wasting hours posting and let our skilled team accelerate business growth through strategic SMM management.</p>
+          </div>
+          
+          <!-- Card 2 -->
+          <div class="bg-slate-900 text-white p-8 rounded-xl">
+            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-4">
+              <span class="text-slate-900 text-xl">📊</span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Best Strategy</h3>
+            <p class="text-gray-300">Our years of experience and best-developed analytics guides craft effective social media strategies aligned with marketing standards.</p>
+          </div>
+          
+          <!-- Card 3 -->
+          <div class="bg-indigo-600 text-white p-8 rounded-xl">
+            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+              <span class="text-indigo-600 text-xl">💼</span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Affordable Price For You</h3>
+            <p class="text-gray-100">Get the best value with our competitive pricing and exceptional service quality.</p>
+          </div>
+        </div>
       </div>
-      <div class="border rounded-xl p-4 bg-white">
-        <div class="font-bold">How do I cancel?</div>
-        <div class="text-slate-700 mt-2">Cancel anytime from your dashboard. Payments & refunds depend on payment processor policy.</div>
-      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-gray-50">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold mb-4">What services does your SMM website offer?</h2>
+          <p class="text-gray-600">We provide a comprehensive range of social media marketing services, including strategy development, content creation, audience engagement, and analytics reporting designed for businesses of all industries.</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-xl font-bold mb-6">Any Questions? We Have Answers!</h3>
+            <p class="text-gray-600 mb-6">SocialSprint is a cutting-edge communication platform designed to streamline conversations for individuals and businesses. It offers a range of features to enhance collaboration and connectivity.</p>
+            <button class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+              Contact Us
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+<div class="space-y-4">
+  <div class="bg-white p-4 rounded-lg border" x-data="{ open: false }">
+    <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+      <span class="font-medium">How can I get started with your SMM services?</span>
+      <button class="w-6 h-6 bg-indigo-100 text-indigo-600 rounded flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
     </div>
+    <div x-show="open" x-transition class="mt-4 text-gray-600">
+      <p>Getting started is simple! Visit our pricing page, choose a plan, and our team will reach out within 24 hours to begin your growth strategy.</p>
+    </div>
+  </div>
+  
+  <div class="bg-white p-4 rounded-lg border" x-data="{ open: false }">
+    <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+      <span class="font-medium">What social media platforms do you specialize in?</span>
+      <button class="w-6 h-6 bg-indigo-100 text-indigo-600 rounded flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+    </div>
+    <div x-show="open" x-transition class="mt-4 text-gray-600">
+      <p>We specialize in Instagram, Facebook, Twitter, LinkedIn, TikTok, and YouTube. Our primary focus is Instagram growth and engagement.</p>
+    </div>
+  </div>
+  
+  <div class="bg-white p-4 rounded-lg border" x-data="{ open: false }">
+    <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+      <span class="font-medium">How do you create content for social media?</span>
+      <button class="w-6 h-6 bg-indigo-100 text-indigo-600 rounded flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+    </div>
+    <div x-show="open" x-transition class="mt-4 text-gray-600">
+      <p>We create custom content calendars, design engaging visuals, write compelling captions, and optimize posting schedules for maximum reach.</p>
+    </div>
+  </div>
+  
+  <div class="bg-white p-4 rounded-lg border" x-data="{ open: false }">
+    <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+      <span class="font-medium">Can I track the performance of my social media campaigns?</span>
+      <button class="w-6 h-6 bg-indigo-100 text-indigo-600 rounded flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+    </div>
+    <div x-show="open" x-transition class="mt-4 text-gray-600">
+      <p>Yes! We provide detailed analytics reports, real-time dashboards, and weekly performance summaries with conversion metrics.</p>
+    </div>
+  </div>
+  
+  <div class="bg-white p-4 rounded-lg border" x-data="{ open: false }">
+    <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+      <span class="font-medium">Is my information secure when using your services?</span>
+      <button class="w-6 h-6 bg-indigo-100 text-indigo-600 rounded flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+    </div>
+    <div x-show="open" x-transition class="mt-4 text-gray-600">
+      <p>Absolutely. All client data is encrypted, we use secure API connections, and we never share your information with third parties.</p>
+    </div>
+  </div>
+</div>
+    </section>
   `;
-  res.send(layout({ title:'FAQ', user:req.user, content: `<section class='max-w-7xl mx-auto px-4 py-10'><h2 class='text-3xl font-bold'>Frequently Asked Questions</h2>${faqHtml}</section>` }));
+  
+  res.send(layout({ title: 'About Us', user: req.user, content: aboutContent }));
 });
-app.get('/services', (req,res)=> res.send(GenericView({ user:req.user, title:'Services', body: `
-  <h3>Our Services</h3>
-  <ul class="list-disc ml-6 text-slate-700">
-    <li><b>Instagram Growth</b> — organic followers, algorithm-optimized posting.</li>
-    <li><b>Content Strategy</b> — calendars, reels playbook, creatives.</li>
-    <li><b>Influencer Partnerships</b> — micro to macro matching and campaign management.</li>
-    <li><b>Analytics & Reporting</b> — dashboards, conversion tracking, custom reports.</li>
-  </ul>
-` })));
-app.get('/team', (req,res)=> res.send(GenericView({ user:req.user, title:'Team', body:`<p class="text-slate-700">Distributed team of growth strategists, creatives, data scientists and account managers.</p>` })));
-app.get('/reviews', (req,res)=> {
-  const reviews = db.prepare('SELECT * FROM reviews ORDER BY created_at DESC').all();
-  res.send(layout({ title:'Reviews', user:req.user, content: `<section class='max-w-4xl mx-auto px-4 py-10'><h2 class='text-3xl font-bold'>Reviews</h2><div class='mt-4'>${reviews.map(r=>`<div class='p-3 border rounded mb-2'><b>${escapeHtml(r.name)}</b> • ${'★'.repeat(r.stars)}<div class='text-slate-700 mt-1'>${escapeHtml(r.content)}</div></div>`).join('')}</div></section>` }));
+app.get('/faq', (req,res)=> {
+  const faqContent = `
+    <!-- Hero Section -->
+    <section class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold">Faq</h1>
+        <div class="flex items-center justify-center gap-2 mt-4">
+          <a href="/" class="text-purple-200 hover:text-white">Home</a>
+          <span class="text-purple-200">›</span>
+          <span>Faq</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Content -->
+    <section class="py-16 bg-gray-50">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="grid lg:grid-cols-2 gap-12">
+          <!-- Left Side -->
+          <div>
+            <div class="text-sm text-indigo-600 font-semibold mb-4">F A Q S</div>
+            <h2 class="text-3xl font-bold mb-6">Any Questions? We Have Answers!</h2>
+            <p class="text-gray-600 mb-8">SocialSprint is a cutting-edge communication platform designed to streamline conversations for individuals and businesses. It offers a range of features to enhance collaboration and connectivity.</p>
+            
+            <a href="/contact" class="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+              Contact Us
+            </a>
+          </div>
+
+          <!-- Right Side - FAQ Items -->
+          <div class="space-y-4">
+            <div class="bg-white p-6 rounded-lg shadow-sm border" x-data="{ open: false }">
+              <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+                <span class="font-semibold">What services does your SMM website offer?</span>
+                <button class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+              </div>
+              <div x-show="open" x-collapse class="mt-4 text-gray-600">
+                <p>We offer comprehensive social media marketing services including Instagram growth, content strategy, influencer partnerships, analytics reporting, and brand management across all major platforms.</p>
+              </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border" x-data="{ open: false }">
+              <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+                <span class="font-semibold">How can I get started with your SMM services?</span>
+                <button class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+              </div>
+              <div x-show="open" x-collapse class="mt-4 text-gray-600">
+                <p>Getting started is simple! Visit our 'Get Started' page, fill out the form, and our team will reach out to you promptly to discuss your goals and tailor a strategy to meet your specific needs.</p>
+              </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border" x-data="{ open: false }">
+              <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+                <span class="font-semibold">What social media platforms do you specialize in?</span>
+                <button class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+              </div>
+              <div x-show="open" x-collapse class="mt-4 text-gray-600">
+                <p>We specialize in Instagram, Facebook, Twitter, LinkedIn, TikTok, and YouTube. Our primary focus is Instagram growth and engagement, but we provide comprehensive strategies across all platforms.</p>
+              </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border" x-data="{ open: false }">
+              <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+                <span class="font-semibold">How do you create content for social media?</span>
+                <button class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+              </div>
+              <div x-show="open" x-collapse class="mt-4 text-gray-600">
+                <p>Our content creation process involves analyzing your brand, target audience, and competitors. We create custom content calendars, design engaging visuals, write compelling captions, and optimize posting schedules for maximum reach.</p>
+              </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border" x-data="{ open: false }">
+              <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+                <span class="font-semibold">Can I track the performance of my social media campaigns?</span>
+                <button class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+              </div>
+              <div x-show="open" x-collapse class="mt-4 text-gray-600">
+                <p>Absolutely! We provide detailed analytics reports showing follower growth, engagement rates, reach, impressions, and conversion metrics. You'll have access to real-time dashboards and weekly performance summaries.</p>
+              </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border" x-data="{ open: false }">
+              <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+                <span class="font-semibold">Is my information secure when using your services?</span>
+                <button class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center transform transition-transform" :class="{ 'rotate-45': open }">+</button>
+              </div>
+              <div x-show="open" x-collapse class="mt-4 text-gray-600">
+                <p>Yes, we take security seriously. All client data is encrypted, we use secure API connections, and we never share your information with third parties. Your account credentials and personal data are fully protected.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+  
+  res.send(layout({ title: 'FAQ', user: req.user, content: faqContent }));
 });
-app.get('/terms', (req,res)=> res.send(GenericView({ user:req.user, title:'Terms', body:`<p class="text-slate-700">Terms placeholder — replace before production.</p>` })));
-app.get('/privacy', (req,res)=> res.send(GenericView({ user:req.user, title:'Privacy Policy', body:`<p class="text-slate-700">Privacy placeholder — replace before production.</p>` })));
-app.get('/refunds', (req,res)=> res.send(GenericView({ user:req.user, title:'Refunds', body:`<p class="text-slate-700">Refund policy placeholder.</p>` })));
+app.get('/services', (req,res)=> {
+  const servicesContent = `
+    <!-- Hero Section -->
+    <section class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold">Our Services</h1>
+        <p class="mt-4 text-lg text-purple-100">Complete social media marketing solutions for modern businesses</p>
+      </div>
+    </section>
+
+    <!-- Main Services -->
+    <section class="py-16 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold mb-4">What We Offer</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">From organic growth to conversion optimization, we provide end-to-end social media marketing services that deliver real results for your business.</p>
+        </div>
+
+        <!-- Service Grid -->
+        <div class="grid lg:grid-cols-2 gap-8 mb-16">
+          <!-- Instagram Growth -->
+          <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
+              <span class="text-white text-2xl">📱</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Instagram Growth</h3>
+            <p class="text-gray-600 mb-6">Organic follower growth using AI-powered targeting, niche analysis, and competitor research. We focus on real, engaged followers who convert.</p>
+            <ul class="space-y-3 mb-6">
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Real, targeted followers</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Hashtag optimization</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Engagement automation</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Growth pods network access</span>
+              </li>
+            </ul>
+            <a href="/pricing" class="inline-block px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all">Get Started</a>
+          </div>
+
+          <!-- Content Strategy -->
+          <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6">
+              <span class="text-white text-2xl">📊</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Content Strategy</h3>
+            <p class="text-gray-600 mb-6">Data-driven content planning with custom calendars, viral reels playbook, and brand-aligned creatives that engage your audience.</p>
+            <ul class="space-y-3 mb-6">
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Custom content calendars</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Viral reels templates</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Brand voice development</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Trending topic integration</span>
+              </li>
+            </ul>
+            <a href="/contact" class="inline-block px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all">Learn More</a>
+          </div>
+
+          <!-- Influencer Partnerships -->
+          <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6">
+              <span class="text-white text-2xl">🤝</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Influencer Partnerships</h3>
+            <p class="text-gray-600 mb-6">Connect with micro and macro influencers who match your brand values and drive real conversions through authentic partnerships.</p>
+            <ul class="space-y-3 mb-6">
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Influencer matching</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Campaign management</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Contract negotiations</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Performance tracking</span>
+              </li>
+            </ul>
+            <a href="/contact" class="inline-block px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all">Get Matched</a>
+          </div>
+
+          <!-- Analytics & Reporting -->
+          <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-6">
+              <span class="text-white text-2xl">📈</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Analytics & Reporting</h3>
+            <p class="text-gray-600 mb-6">Comprehensive analytics dashboards with actionable insights, conversion tracking, and custom reports to optimize your ROI.</p>
+            <ul class="space-y-3 mb-6">
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Real-time dashboards</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Conversion tracking</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Weekly reports</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-xs">✓</span>
+                </div>
+                <span class="text-gray-700">Competitive analysis</span>
+              </li>
+            </ul>
+            <a href="/performance" class="inline-block px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition-all">View Analytics</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold mb-4">Our Process</h2>
+          <p class="text-gray-600">How we deliver results in 4 simple steps</p>
+        </div>
+        
+        <div class="grid md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span class="text-indigo-600 text-2xl font-bold">1</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Strategy</h3>
+            <p class="text-gray-600 text-sm">We analyze your brand, audience, and competitors to create a custom growth strategy.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span class="text-purple-600 text-2xl font-bold">2</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Setup</h3>
+            <p class="text-gray-600 text-sm">We configure targeting parameters and begin organic growth campaigns.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span class="text-green-600 text-2xl font-bold">3</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Growth</h3>
+            <p class="text-gray-600 text-sm">Watch your followers, engagement, and reach grow with real, targeted users.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span class="text-blue-600 text-2xl font-bold">4</span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Optimize</h3>
+            <p class="text-gray-600 text-sm">We continuously analyze and optimize campaigns for maximum ROI.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+      <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Ready to Transform Your Social Media?</h2>
+        <p class="text-lg mb-8">Join 2,800+ businesses already growing with SMM Matrix</p>
+        <div class="flex gap-4 justify-center">
+          <a href="/pricing" class="px-8 py-4 bg-white text-indigo-600 rounded-lg font-bold hover:bg-gray-100 transition-colors">View Pricing</a>
+          <a href="/contact" class="px-8 py-4 border-2 border-white/30 rounded-lg hover:bg-white/10 transition-colors">Schedule Consultation</a>
+        </div>
+      </div>
+    </section>
+  `;
+  
+  res.send(layout({ title: 'Services', user: req.user, content: servicesContent }));
+});
 
 
 // ------------------------ Start server (only local) -----------------------
@@ -1419,6 +2156,7 @@ if (require.main === module) {
 
 // For Vercel (export the app as a handler)
 module.exports = app;
+
 
 
 
